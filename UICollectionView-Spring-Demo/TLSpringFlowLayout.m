@@ -64,13 +64,15 @@
     
     // Step 1: Remove any behaviours that are no longer visible.
     NSArray *noLongerVisibleBehaviours = [self.dynamicAnimator.behaviors filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UIAttachmentBehavior *behaviour, NSDictionary *bindings) {
-        return [itemsIndexPathsInVisibleRectSet containsObject:[[[behaviour items] firstObject] indexPath]] == NO;
+        UICollectionViewLayoutAttributes *attribute = (UICollectionViewLayoutAttributes *)[[behaviour items] firstObject];
+        return [itemsIndexPathsInVisibleRectSet containsObject:[attribute indexPath]] == NO;
     }]];
     
     [noLongerVisibleBehaviours enumerateObjectsUsingBlock:^(id obj, NSUInteger index, BOOL *stop) {
+        UICollectionViewLayoutAttributes *attribute = (UICollectionViewLayoutAttributes *)[[obj items] firstObject];
         [self.dynamicAnimator removeBehavior:obj];
-        [self.visibleIndexPathsSet removeObject:[[[obj items] firstObject] indexPath]];
-        [self.visibleHeaderAndFooterSet removeObject:[[[obj items] firstObject] indexPath]];
+        [self.visibleIndexPathsSet removeObject:[attribute indexPath]];
+        [self.visibleHeaderAndFooterSet removeObject:[attribute indexPath]];
     }];
     
     // Step 2: Add any newly visible behaviours.
@@ -153,13 +155,13 @@
     
     [self.dynamicAnimator.behaviors enumerateObjectsUsingBlock:^(UIAttachmentBehavior *springBehaviour, NSUInteger idx, BOOL *stop) {
         if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
-            CGFloat distanceFromTouch = fabsf(touchLocation.y - springBehaviour.anchorPoint.y);
+            CGFloat distanceFromTouch = fabs(touchLocation.y - springBehaviour.anchorPoint.y);
             
             CGFloat scrollResistance;
             if (self.scrollResistanceFactor) scrollResistance = distanceFromTouch / self.scrollResistanceFactor;
             else scrollResistance = distanceFromTouch / kScrollResistanceFactorDefault;
             
-            UICollectionViewLayoutAttributes *item = [springBehaviour.items firstObject];
+            UICollectionViewLayoutAttributes *item = (UICollectionViewLayoutAttributes *)[springBehaviour.items firstObject];
             CGPoint center = item.center;
             if (delta < 0) center.y += MAX(delta, delta*scrollResistance);
             else center.y += MIN(delta, delta*scrollResistance);
@@ -168,13 +170,13 @@
             
             [self.dynamicAnimator updateItemUsingCurrentState:item];
         } else {
-            CGFloat distanceFromTouch = fabsf(touchLocation.x - springBehaviour.anchorPoint.x);
+            CGFloat distanceFromTouch = fabs(touchLocation.x - springBehaviour.anchorPoint.x);
             
             CGFloat scrollResistance;
             if (self.scrollResistanceFactor) scrollResistance = distanceFromTouch / self.scrollResistanceFactor;
             else scrollResistance = distanceFromTouch / kScrollResistanceFactorDefault;
             
-            UICollectionViewLayoutAttributes *item = [springBehaviour.items firstObject];
+            UICollectionViewLayoutAttributes *item = (UICollectionViewLayoutAttributes *)[springBehaviour.items firstObject];
             CGPoint center = item.center;
             if (delta < 0) center.x += MAX(delta, delta*scrollResistance);
             else center.x += MIN(delta, delta*scrollResistance);
