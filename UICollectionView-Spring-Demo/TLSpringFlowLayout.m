@@ -189,29 +189,4 @@
     
     return NO;
 }
-
-- (void)prepareForCollectionViewUpdates:(NSArray *)updateItems {
-    [super prepareForCollectionViewUpdates:updateItems];
-    
-    [updateItems enumerateObjectsUsingBlock:^(UICollectionViewUpdateItem *updateItem, NSUInteger idx, BOOL *stop) {
-        if (updateItem.updateAction == UICollectionUpdateActionInsert) {
-            if([self.dynamicAnimator layoutAttributesForCellAtIndexPath:updateItem.indexPathAfterUpdate])
-            {
-                return;
-            }
-            
-            UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:updateItem.indexPathAfterUpdate];
-            
-            //attributes.frame = CGRectMake(10, updateItem.indexPathAfterUpdate.item * 310, 300, 44); // or some other initial frame
-            
-            UIAttachmentBehavior *springBehaviour = [[UIAttachmentBehavior alloc] initWithItem:attributes attachedToAnchor:attributes.center];
-            
-            springBehaviour.length = 1.0f;
-            springBehaviour.damping = 0.8f;
-            springBehaviour.frequency = 1.0f;
-            [self.dynamicAnimator addBehavior:springBehaviour];
-        }
-    }];
-}
-
 @end
